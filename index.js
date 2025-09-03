@@ -2,6 +2,8 @@ import express from "express";
 import config from "./utils/config.js";
 import mongoose from "mongoose";
 import userRouter from "./routes/users.js";
+import { swaggerSpec, swaggerUiMiddleware } from "./utils/swagger.js";
+import cors from "cors";
 
 //Make database connection
 await mongoose
@@ -13,6 +15,19 @@ const app = express();
 
 //Use global middlewares
 app.use(express.json());
+
+//Cors configurations
+app.use(
+  cors({
+    origin: "https://backend-endpoint-performance-analysis.onrender.com",
+  })
+);
+// Swagger docs
+app.use(
+  "/api-docs",
+  swaggerUiMiddleware.serve,
+  swaggerUiMiddleware.setup(swaggerSpec)
+);
 
 //User route
 app.use("/api/v1", userRouter);
